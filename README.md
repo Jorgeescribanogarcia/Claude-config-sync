@@ -57,10 +57,6 @@ Your backups on GitHub (the `claude-code-config` repo) are not affected.
 
 ---
 
-## Contributing
-
-Want to add a plugin to this marketplace? Open a PR with your plugin inside the `plugins/` directory following the existing structure.
-
 ## Author
 
 [Jorgeescribanogarcia](https://github.com/Jorgeescribanogarcia)
