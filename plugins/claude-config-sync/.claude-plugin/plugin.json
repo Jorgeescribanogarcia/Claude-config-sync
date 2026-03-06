@@ -1,0 +1,13 @@
+{
+  "name": "claude-config-sync",
+  "version": "1.1.0",
+  "description": "Backup and restore Claude Code configuration to/from a private GitHub repository. Run /setup-config-sync after installing.",
+  "author": {
+    "name": "Jorgeescribanogarcia",
+    "url": "https://github.com/Jorgeescribanogarcia"
+  },
+  "homepage": "https://github.com/Jorgeescribanogarcia/Claude-config-sync",
+  "repository": "https://github.com/Jorgeescribanogarcia/Claude-config-sync",
+  "license": "MIT",
+  "keywords": ["backup", "config", "github", "sync", "restore"]
+}
