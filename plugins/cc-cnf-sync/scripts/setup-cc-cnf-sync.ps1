@@ -1,4 +1,4 @@
-# setup-cc-sync.ps1
+# setup-cc-cnf-sync.ps1
 # Full setup: cleans previous install + installs GitHub MCP + configures token
 # This script is called automatically by /cc-setup
 
@@ -8,7 +8,7 @@ param(
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  cc-sync - Setup" -ForegroundColor Cyan
+Write-Host "  cc-cnf-sync - Setup" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 

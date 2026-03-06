@@ -12,7 +12,7 @@ claude plugin marketplace add https://github.com/Jorgeescribanogarcia/jeg-claude
 
 | Plugin | Description | Install |
 |--------|-------------|---------|
-| [**claude-config-sync**](plugins/claude-config-sync/README.md) | Backup and restore your Claude Code configuration to a private GitHub repo | `claude plugin install claude-config-sync@jeg` |
+| [**cc-cnf-sync**](plugins/cc-cnf-sync/README.md) | Backup and restore your Claude Code configuration to a private GitHub repo | `claude plugin install cc-cnf-sync@jeg` |
 
 ---
 

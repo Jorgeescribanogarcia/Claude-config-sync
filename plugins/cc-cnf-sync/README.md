@@ -1,4 +1,4 @@
-# claude-config-sync
+# cc-cnf-sync
 
 Backup and restore your Claude Code configuration (settings, plugins, commands, skills, agents) to a private GitHub repository.
 
@@ -19,7 +19,7 @@ Backup and restore your Claude Code configuration (settings, plugins, commands, 
 ## Quick start
 
 ```
-claude plugin install claude-config-sync@jeg
+claude plugin install cc-cnf-sync@jeg
 ```
 
 Restart Claude Code, then run:
@@ -31,7 +31,7 @@ Restart Claude Code, then run:
 ## Uninstall
 
 ```
-claude plugin uninstall claude-config-sync@jeg
+claude plugin uninstall cc-cnf-sync@jeg
 ```
 
 Your backups on GitHub (the `claude-code-config` repo) are not affected.

@@ -42,7 +42,7 @@ Running setup script...
 
 Then execute:
 ```bash
-powershell -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/setup.ps1"
+powershell -ExecutionPolicy Bypass -File "${CLAUDE_PLUGIN_ROOT}/scripts/setup-cc-cnf-sync.ps1"
 ```
 
 Wait for the script to complete.
