@@ -12,13 +12,13 @@ claude plugin marketplace add https://github.com/Jorgeescribanogarcia/jeg-claude
 
 | Plugin | Description | Install |
 |--------|-------------|---------|
-| **cc-sync** | Backup and restore your Claude Code configuration to a private GitHub repo | `claude plugin install cc-sync@jeg` |
+| **claude-config-sync** | Backup and restore your Claude Code configuration to a private GitHub repo | `claude plugin install claude-config-sync@jeg` |
 
 ---
 
 ## Plugin Details
 
-### cc-sync
+### claude-config-sync
 
 Backup and restore your Claude Code configuration (settings, plugins, commands, skills, agents) to a private GitHub repository.
 
@@ -38,7 +38,7 @@ Backup and restore your Claude Code configuration (settings, plugins, commands, 
 **Quick start:**
 
 ```
-claude plugin install cc-sync@jeg
+claude plugin install claude-config-sync@jeg
 ```
 
 Restart Claude Code, then run:
@@ -50,7 +50,7 @@ Restart Claude Code, then run:
 **Uninstall:**
 
 ```
-claude plugin uninstall cc-sync@jeg
+claude plugin uninstall claude-config-sync@jeg
 ```
 
 Your backups on GitHub (the `claude-code-config` repo) are not affected.
