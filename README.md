@@ -13,7 +13,7 @@ claude plugin marketplace add https://github.com/Jorgeescribanogarcia/Claude-con
 Then install the plugin:
 
 ```
-claude plugin install claude-config-sync@jorgeescribanogarcia-marketplace
+claude plugin install claude-config-sync@jeg
 ```
 
 Restart Claude Code and run the setup:
@@ -50,7 +50,7 @@ Backup and restore your Claude Code configuration (settings, plugins, commands, 
 ## Uninstall
 
 ```
-claude plugin uninstall claude-config-sync@jorgeescribanogarcia-marketplace
+claude plugin uninstall claude-config-sync@jeg
 ```
 
 That's it. All commands are loaded from the plugin cache, so uninstalling the plugin removes everything cleanly. Your backups on GitHub (the `claude-code-config` repo) are not affected.
