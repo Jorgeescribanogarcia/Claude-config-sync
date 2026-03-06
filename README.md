@@ -44,3 +44,13 @@ Backup and restore your Claude Code configuration (settings, plugins, commands, 
 **Requirements:**
 - Claude Code v22+
 - A GitHub personal access token with `repo` scope (the `/setup-config-sync` command will guide you)
+
+---
+
+## Uninstall
+
+```
+claude plugin uninstall claude-config-sync@jorgeescribanogarcia-marketplace
+```
+
+That's it. All commands are loaded from the plugin cache, so uninstalling the plugin removes everything cleanly. Your backups on GitHub (the `claude-code-config` repo) are not affected.
