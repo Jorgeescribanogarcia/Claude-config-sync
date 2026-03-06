@@ -1,4 +1,4 @@
-# /cc-setup
+# /setup
 
 First-time setup — configures GitHub token and MCP automatically
 
@@ -24,9 +24,9 @@ Use the GitHub MCP to call `get_me` or any authenticated endpoint.
 ✅ GitHub MCP is already configured and working.
 
 You are ready to use:
-  /cc-backup  - Upload your config to GitHub
-  /cc-restore - Restore your config from GitHub
-  /cc-status  - Show status and last backup date
+  /backup  - Upload your config to GitHub
+  /restore - Restore your config from GitHub
+  /status  - Show status and last backup date
 ```
 
 **If it fails or MCP is not installed:** Continue to Step 3.
@@ -58,9 +58,9 @@ After the script finishes, use the GitHub MCP to verify authentication by callin
 ✅ Setup complete! GitHub MCP is connected as @<username>.
 
 Restart Claude Code and you are ready to use:
-  /cc-backup  - Upload your config to GitHub
-  /cc-restore - Restore your config from GitHub
-  /cc-status  - Show status and last backup date
+  /backup  - Upload your config to GitHub
+  /restore - Restore your config from GitHub
+  /status  - Show status and last backup date
 ```
 
 **If authentication still fails:** Show:
@@ -68,5 +68,5 @@ Restart Claude Code and you are ready to use:
 ❌ Setup completed but GitHub authentication failed.
 
 Please check that your token has 'repo' scope and try again:
-  /cc-setup
+  /setup
 ```

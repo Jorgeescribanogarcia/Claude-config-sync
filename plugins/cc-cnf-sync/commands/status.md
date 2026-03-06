@@ -1,4 +1,4 @@
-# /cc-status
+# /status
 
 Show current Claude Code configuration status and last backup information.
 
@@ -28,7 +28,7 @@ If the GitHub MCP is available and the session is active:
 - Extract: `backup_date`, `hostname`, `claude_version`
 
 If the GitHub MCP is not available or not authenticated:
-- Show: `Could not connect to GitHub — run /cc-setup first`
+- Show: `Could not connect to GitHub — run /setup first`
 
 ---
 
@@ -58,5 +58,5 @@ DAYS SINCE LAST BACKUP: <days or "N/A">
 If more than 7 days have passed since the last backup, show:
 ```
 ⚠️  It has been more than 7 days since your last backup.
-    Run /cc-backup to update it.
+    Run /backup to update it.
 ```

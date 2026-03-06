@@ -1,6 +1,6 @@
 # setup-cc-cnf-sync.ps1
 # Full setup: cleans previous install + installs GitHub MCP + configures token
-# This script is called automatically by /cc-setup
+# This script is called automatically by /setup
 
 param(
     [string]$Token = ""
@@ -55,7 +55,7 @@ Write-Host "  Setup complete!" -ForegroundColor Green
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Restart Claude Code and you are ready to use:" -ForegroundColor White
-Write-Host "  /cc-backup  - Upload your config to GitHub" -ForegroundColor Cyan
-Write-Host "  /cc-restore - Restore your config from GitHub" -ForegroundColor Cyan
-Write-Host "  /cc-status  - Show status and last backup date" -ForegroundColor Cyan
+Write-Host "  /backup  - Upload your config to GitHub" -ForegroundColor Cyan
+Write-Host "  /restore - Restore your config from GitHub" -ForegroundColor Cyan
+Write-Host "  /status  - Show status and last backup date" -ForegroundColor Cyan
 Write-Host ""

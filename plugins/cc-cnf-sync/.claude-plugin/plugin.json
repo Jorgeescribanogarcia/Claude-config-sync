@@ -1,7 +1,7 @@
 {
   "name": "cc-cnf-sync",
   "version": "2.0.0",
-  "description": "Backup and restore Claude Code configuration to/from a private GitHub repository. Run /cc-setup after installing.",
+  "description": "Backup and restore Claude Code configuration to/from a private GitHub repository. Run /setup after installing.",
   "author": {
     "name": "Jorgeescribanogarcia",
     "url": "https://github.com/Jorgeescribanogarcia"

@@ -1,4 +1,4 @@
-# /cc-restore
+# /restore
 
 Restore your configuration from GitHub
 
@@ -15,8 +15,8 @@ claude mcp list
 ```
 ❌ GitHub MCP not found.
 
-Run /cc-setup first to configure the GitHub MCP,
-then restart Claude Code and run /cc-restore again.
+Run /setup first to configure the GitHub MCP,
+then restart Claude Code and run /restore again.
 ```
 
 **If found**, continue.
@@ -31,8 +31,8 @@ Use the GitHub MCP to verify authentication.
 ```
 ❌ No active GitHub session.
 
-Run /cc-setup to configure your GitHub token,
-then restart Claude Code and run /cc-restore again.
+Run /setup to configure your GitHub token,
+then restart Claude Code and run /restore again.
 ```
 
 **If authenticated**, save the username and continue.
@@ -47,7 +47,7 @@ Use the GitHub MCP to check if `claude-code-config` exists for the authenticated
 ```
 ❌ Backup repository not found.
 
-You haven't created a backup yet. Run /cc-backup first.
+You haven't created a backup yet. Run /backup first.
 ```
 
 **If found**, continue.
