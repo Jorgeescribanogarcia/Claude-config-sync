@@ -1,6 +1,6 @@
 # /setup-config-sync
 
-First-time setup for claude-config-sync. Configures the GitHub token and installs the GitHub MCP automatically.
+First-time setup — configures GitHub token and MCP automatically
 
 ## Steps to follow
 

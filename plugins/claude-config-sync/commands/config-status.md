@@ -1,6 +1,6 @@
 # /config-status
 
-Show current Claude Code configuration status and last backup information.
+Show status and last backup date
 
 ## Steps to follow
 
@@ -28,7 +28,7 @@ If the GitHub MCP is available and the session is active:
 - Extract: `backup_date`, `hostname`, `claude_version`
 
 If the GitHub MCP is not available or not authenticated:
-- Show: `Could not connect to GitHub — backup info unavailable`
+- Show: `Could not connect to GitHub — run /setup-config-sync first`
 
 ---
 

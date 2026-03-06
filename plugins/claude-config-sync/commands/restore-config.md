@@ -1,6 +1,6 @@
 # /restore-config
 
-Restore Claude Code configuration from the GitHub backup repository.
+Restore your configuration from GitHub
 
 ## Steps to follow
 
@@ -15,10 +15,8 @@ claude mcp list
 ```
 ❌ GitHub MCP not found.
 
-Install it by running:
-  claude mcp add github npx @modelcontextprotocol/server-github
-
-Then restart Claude Code and run /restore-config again.
+Run /setup-config-sync first to configure the GitHub MCP,
+then restart Claude Code and run /restore-config again.
 ```
 
 **If found**, continue.
@@ -33,8 +31,8 @@ Use the GitHub MCP to verify authentication.
 ```
 ❌ No active GitHub session.
 
-Make sure the GITHUB_PERSONAL_ACCESS_TOKEN environment variable is set
-with a valid token that has 'repo' scope.
+Run /setup-config-sync to configure your GitHub token,
+then restart Claude Code and run /restore-config again.
 ```
 
 **If authenticated**, save the username and continue.

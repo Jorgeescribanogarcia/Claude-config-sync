@@ -32,25 +32,13 @@ if ([string]::IsNullOrWhiteSpace($Token)) {
     Write-Host "  You need a GitHub Personal Access Token with 'repo' scope." -ForegroundColor White
     Write-Host "  Create one at: https://github.com/settings/tokens" -ForegroundColor Cyan
     Write-Host ""
-    $Token = Read-Host "  Paste your GitHub token (input is hidden)"
+    $Token = Read-Host "  Paste your GitHub token"
 }
 
 if ([string]::IsNullOrWhiteSpace($Token)) {
     Write-Host "  ERROR: No token provided. Setup cancelled." -ForegroundColor Red
     exit 1
 }
-
-# Save token to PowerShell profile
-if (-not (Test-Path $PROFILE)) {
-    New-Item -Path $PROFILE -ItemType File -Force | Out-Null
-}
-
-$CONTENT = Get-Content $PROFILE -ErrorAction SilentlyContinue
-$CONTENT = $CONTENT | Where-Object { $_ -notmatch "GITHUB_PERSONAL_ACCESS_TOKEN" }
-$CONTENT += "`$env:GITHUB_PERSONAL_ACCESS_TOKEN = `"$Token`""
-Set-Content $PROFILE $CONTENT
-$env:GITHUB_PERSONAL_ACCESS_TOKEN = $Token
-Write-Host "  Token saved to PowerShell profile." -ForegroundColor Green
 
 # Install GitHub MCP
 claude mcp add github npx @modelcontextprotocol/server-github --env "GITHUB_PERSONAL_ACCESS_TOKEN=$Token" --scope user

@@ -1,6 +1,6 @@
 # /backup-config
 
-Backup all Claude Code configuration files to a private GitHub repository.
+Upload your configuration to GitHub
 
 ## Steps to follow
 
@@ -18,10 +18,8 @@ Look for any entry containing "github" in the output.
 ```
 ❌ GitHub MCP not found.
 
-Install it by running:
-  claude mcp add github npx @modelcontextprotocol/server-github
-
-Then restart Claude Code and run /backup-config again.
+Run /setup-config-sync first to configure the GitHub MCP,
+then restart Claude Code and run /backup-config again.
 ```
 
 **If GitHub MCP IS found**, continue to Step 2.
@@ -36,8 +34,8 @@ Use the GitHub MCP to verify the authenticated user (e.g., call `get_me` or equi
 ```
 ❌ No active GitHub session.
 
-Make sure the GITHUB_PERSONAL_ACCESS_TOKEN environment variable is set
-with a valid token that has 'repo' scope.
+Run /setup-config-sync to configure your GitHub token,
+then restart Claude Code and run /backup-config again.
 ```
 
 **If authenticated**, save the username and continue.
