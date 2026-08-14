@@ -79,6 +79,19 @@ if [ -d "$HOME/.agents/skills" ]; then
   [ -f "$HOME/.agents/.skill-lock.json" ] && cp "$HOME/.agents/.skill-lock.json" "$TEMP_DIR/agents-skill-lock.json"
 fi
 
+# VSCode profile — ONLY when opted in (`/config vscode on`). Same allowlist as the hook: user config
+# files + snippets/ + a portable extensions list. globalStorage/workspaceStorage/History/sync excluded.
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/cc-cnf-sync/config"
+if [ -f "$CFG" ] && grep -q '^vscode_sync=on' "$CFG"; then
+  case "$(uname -s)" in Darwin) VSC="$HOME/Library/Application Support/Code/User";; *MINGW*|*MSYS*|*CYGWIN*) VSC="$APPDATA/Code/User";; *) VSC="$HOME/.config/Code/User";; esac
+  if [ -d "$VSC" ]; then
+    mkdir -p "$TEMP_DIR/vscode/snippets"
+    for f in settings.json keybindings.json tasks.json locale.json argv.json; do [ -f "$VSC/$f" ] && cp "$VSC/$f" "$TEMP_DIR/vscode/$f"; done
+    [ -d "$VSC/snippets" ] && cp -r "$VSC/snippets/." "$TEMP_DIR/vscode/snippets/"
+    command -v code >/dev/null 2>&1 && code --list-extensions 2>/dev/null | sort > "$TEMP_DIR/vscode/extensions.txt"
+  fi
+fi
+
 echo "$TEMP_DIR"
 ```
 
@@ -372,6 +385,7 @@ Included:
   ✓ skills/ (<n> files)
   ✓ agents/ (<n> files)
   ✓ agents-skills/ (<n> files)   ← system agent skills (~/.agents/skills); omit if ~/.agents is absent
+  ✓ vscode/ (<n> files, <k> extensions)   ← only if VSCode sync is on (/config); omit otherwise
   ✓ memory/ (<n> project(s))   ← only if the user opted in; omit this line otherwise
 
 Excluded for security:

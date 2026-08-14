@@ -37,10 +37,27 @@ private `claude-code-config` repo exists. It stores **no token** — only the ba
    Backup repo: https://github.com/<username>/claude-code-config
 
 You are ready to use:
-  /export  - Upload your config to GitHub
-  /import  - Restore your config from GitHub
-  /status  - Show status and last backup date
+  /export   - Upload your config to GitHub
+  /import   - Restore your config from GitHub
+  /status   - Show status and last backup date
+  /memory   - View / manage your synced memory
+  /sessions - Manage a project's chat sessions (list/delete/clean/rename)
+  /config   - Plugin options (e.g. VSCode profile sync)
 ```
+
+Then **ask the user** whether to configure anything now or keep the factory defaults — and mention
+that VSCode sync is off by default:
+```
+⚙️  Setup finished with factory defaults: memory and your Claude Code config (CLAUDE.md, commands,
+   skills, agents, settings) sync automatically. **VSCode profile sync is OFF.**
+
+¿Quieres configurar algo ahora o dejar los valores de fábrica?
+  • Activar sync de VSCode (settings, keybindings, snippets, extensiones):  /config vscode on
+  • Ver todas las opciones:  /config
+  • O dejarlo tal cual — no hay nada más que hacer.
+```
+Wait for the user's answer. If they want VSCode sync on, run `/config vscode on` for them; if they
+want to keep defaults, just confirm you're done. Don't force the choice.
 
 ---
 
