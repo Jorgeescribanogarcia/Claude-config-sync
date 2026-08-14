@@ -288,6 +288,19 @@ CFG_BASE="$CFG_DIR/config-base"                     # machine-level 3-way base (
 CONFIG_FILES="CLAUDE.md settings.json keybindings.json plugins.json"
 CONFIG_TREES="commands skills agents"
 
+# VSCode profile sync is OPT-IN — default OFF, toggled by /config (stored in $CFG_DIR/config as
+# `vscode_sync=on`). When on, we mirror the VSCode *User* profile (allowlist below) under `vscode/`
+# in the backup; the machine-specific globalStorage/workspaceStorage/History/sync dirs are NEVER touched.
+cfg_flag() { [ -f "$CFG_DIR/config" ] && awk -F= -v k="$1" '$1==k{print $2; exit}' "$CFG_DIR/config" 2>/dev/null; }
+vscode_enabled() { [ "$(cfg_flag vscode_sync)" = "on" ]; }
+VSCODE_USER="${CC_SYNC_VSCODE_HOME:-}"              # VSCode "User" config dir; test seam
+if [ -z "$VSCODE_USER" ]; then
+  for p in "${APPDATA:-}/Code/User" "$HOME/.config/Code/User" "$HOME/Library/Application Support/Code/User"; do
+    [ -d "$p" ] && { VSCODE_USER="$p"; break; }
+  done
+fi
+VSCODE_FILES="settings.json keybindings.json tasks.json locale.json argv.json"
+
 cfgbase_get() { [ -f "$CFG_BASE" ] || return; awk -v n="$1" '{p=$0;sub(/^[^ ]* /,"",p); if(p==n){print $1;exit}}' "$CFG_BASE" 2>/dev/null; }
 
 # 3-way merge one config file: rel=identity (for the base), lf=local path, cf=cache path.
@@ -323,6 +336,17 @@ sync_config() {
   # when ~/.agents is absent (sync_tree guards on the local dir; merge_one returns if neither side exists).
   sync_tree "$AGENTS_HOME/skills" "$CACHE/agents-skills" "agents-skills"
   merge_one "agents-skill-lock.json" "$AGENTS_HOME/.skill-lock.json" "$CACHE/agents-skill-lock.json"
+  # VSCode profile — OPT-IN (see /config). Allowlist of user config files + snippets/ + a portable
+  # extensions manifest (reinstalled by /import). Never touches globalStorage/workspaceStorage/etc.
+  if vscode_enabled && [ -n "$VSCODE_USER" ]; then
+    for f in $VSCODE_FILES; do merge_one "vscode/$f" "$VSCODE_USER/$f" "$CACHE/vscode/$f"; done
+    sync_tree "$VSCODE_USER/snippets" "$CACHE/vscode/snippets" "vscode/snippets"
+    if command -v code >/dev/null 2>&1; then
+      mkdir -p "$CFG_DIR" 2>/dev/null
+      code --list-extensions 2>/dev/null | sort > "$CFG_DIR/vscode-extensions.txt"
+      merge_one "vscode/extensions.txt" "$CFG_DIR/vscode-extensions.txt" "$CACHE/vscode/extensions.txt"
+    fi
+  fi
 }
 
 record_config_bases() {  # snapshot the just-synced config hashes as the new 3-way base
@@ -335,6 +359,13 @@ record_config_bases() {  # snapshot the just-synced config hashes as the new 3-w
     [ -f "$AGENTS_HOME/.skill-lock.json" ] && printf '%s %s\n' "$(hash_note "$AGENTS_HOME/.skill-lock.json")" "agents-skill-lock.json"
     [ -d "$AGENTS_HOME/skills" ] && ( cd "$AGENTS_HOME/skills" && find . -type f ! -name '*.cc-conflict' 2>/dev/null | sed 's#^\./##' ) | while IFS= read -r rp; do
         printf '%s %s\n' "$(hash_note "$AGENTS_HOME/skills/$rp")" "agents-skills/$rp"; done
+    # VSCode profile (only when opted in) — same relpaths sync_config uses.
+    if vscode_enabled && [ -n "$VSCODE_USER" ]; then
+      for f in $VSCODE_FILES; do [ -f "$VSCODE_USER/$f" ] && printf '%s %s\n' "$(hash_note "$VSCODE_USER/$f")" "vscode/$f"; done
+      [ -d "$VSCODE_USER/snippets" ] && ( cd "$VSCODE_USER/snippets" && find . -type f ! -name '*.cc-conflict' 2>/dev/null | sed 's#^\./##' ) | while IFS= read -r rp; do
+          printf '%s %s\n' "$(hash_note "$VSCODE_USER/snippets/$rp")" "vscode/snippets/$rp"; done
+      [ -f "$CFG_DIR/vscode-extensions.txt" ] && printf '%s %s\n' "$(hash_note "$CFG_DIR/vscode-extensions.txt")" "vscode/extensions.txt"
+    fi
   } > "$CFG_BASE.tmp" 2>/dev/null
   mv "$CFG_BASE.tmp" "$CFG_BASE" 2>/dev/null
 }

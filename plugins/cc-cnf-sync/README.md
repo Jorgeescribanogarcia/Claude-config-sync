@@ -95,6 +95,13 @@ the same way — mirrored under `agents-skills/` in the backup, together with th
 install manifest (GitHub source URLs + hashes, no absolute paths). This is **skipped entirely** on machines
 without `~/.agents`, so it's a no-op if you don't use that ecosystem.
 
+**VSCode profile (opt-in, off by default).** Run `/config vscode on` and the hook also syncs your VSCode
+*User* profile — `settings.json`, `keybindings.json`, `tasks.json`, `snippets/`, and a portable
+**extensions list** (`code --list-extensions`, reinstalled by `/import` via `code --install-extension`) —
+under `vscode/` in the backup, with the same 3-way merge. The machine-specific `globalStorage/`,
+`workspaceStorage/`, `History/` and `sync/` folders are **never** touched. Toggle it per machine with
+`/config`; it's a no-op where VSCode isn't installed.
+
 It's a **strict allowlist**: nothing else is ever touched, and anything machine-specific belongs in
 `settings.local.json` (never synced — nor are `.credentials.json`, history, or tokens). A genuine two-sided
 edit of the same config file keeps your local copy and saves the other version as a `.cc-conflict` sidecar.
@@ -121,6 +128,8 @@ mid-flight push (and `SessionStart` re-syncs regardless, so nothing is lost eith
 | `/import` | Restore your configuration from GitHub (e.g. on a new machine) |
 | `/status` | Show local status and last-backup info |
 | `/memory` | List / view / delete synced memory notes without opening GitHub |
+| `/sessions` | Manage a project's chat sessions — list / delete / clean / rename (also `all` projects) |
+| `/config` | Plugin options — e.g. turn on the opt-in **VSCode profile sync** |
 | `/uninstall` | Remove the plugin's local files (your backup and `gh` login stay intact) |
 
 ### `/setup`

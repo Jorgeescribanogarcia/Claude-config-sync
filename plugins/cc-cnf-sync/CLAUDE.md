@@ -13,7 +13,7 @@ machines/OS via `SessionStart`/`SessionEnd` hooks.
 ## Two halves
 
 1. **Commands** (`commands/*.md`, run by the agent): `/setup`, `/export`, `/import`, `/status`,
-   `/memory`, `/uninstall`. One-shot, user-invoked.
+   `/memory`, `/sessions`, `/config`, `/uninstall`. One-shot, user-invoked.
 2. **The hook** (`hooks/sync-memory.sh`, run by Claude Code on session start/end): automatic,
    continuous, bidirectional memory + global-config sync. This is the heart of the plugin.
 
@@ -76,6 +76,12 @@ The global-config 3-way bases live in `~/.config/cc-cnf-sync/` (`config-base`), 
   cross-tool skills home OUTSIDE `~/.claude`) mirrored under the cache namespace `agents-skills/`, plus
   the portable `~/.agents/.skill-lock.json` → `agents-skill-lock.json`. No-op when `~/.agents` is absent.
   Recorded in the 3-way base under the same `agents-skills/…` / `agents-skill-lock.json` relpaths.
+- **VSCode profile** (`sync_config`, **OPT-IN**): gate `vscode_enabled` reads `vscode_sync=on` from
+  `$CFG_DIR/config` (written by `/config`). When on + VSCode present, mirrors the *User* dir
+  (`settings.json keybindings.json tasks.json locale.json argv.json` + `snippets/` + a regenerated
+  `extensions.txt` from `code --list-extensions`, cached at `$CFG_DIR/vscode-extensions.txt`) under
+  `vscode/`. `globalStorage/workspaceStorage/History/sync/` are NEVER touched. `/import` restores it and
+  reinstalls extensions via `code --install-extension`. Test seam: `CC_SYNC_VSCODE_HOME`. Default OFF.
 - `SessionEnd` runs **detached** (backgrounded) so app teardown can't cancel the push;
   `SessionStart` re-syncs regardless, so nothing is lost either way.
 
@@ -91,7 +97,17 @@ merges the prev manifest (fetched via `gh api … Accept: raw`) — do not regen
 - `CC_SYNC_CACHE` — override the cache clone dir (default `~/.claude/cc-cnf-sync/cache/config`).
 - `CC_SYNC_CONFIG_HOME` — override `~/.claude` for the global-config sync.
 - `CC_SYNC_AGENTS_HOME` — override `~/.agents` for the system agent-skills sync.
+- `CC_SYNC_VSCODE_HOME` — override the VSCode *User* dir for the opt-in VSCode sync.
 - `CC_SYNC_INPUT` / `CC_SYNC_BG` — used by the SessionEnd detach re-invocation.
+
+## /sessions — chat transcripts, NOT synced
+
+`/sessions` manages a project's raw transcripts (`~/.claude/projects/<slug>/*.jsonl`) — list/delete/clean/
+rename, or `all` across projects. These are **never** backed up (only each project's `memory/` is), so
+deleting them just reclaims disk. The locator matches a project dir by comparing each transcript's `cwd`
+(read with `grep -oh '"cwd":"…"' | cut`, never sed-over-jsonl) to `$PWD`, both normalized via
+`tr '\\' '/'` (NOT backslash-sed). **Rename** appends a `{"type":"ai-title","aiTitle":"…","sessionId":"…"}`
+record — Claude Code shows the *last* `ai-title` — JSON-escaping `"`/`\` in the title.
 
 ## ⚠️ Slash-command `$1`/`$0` substitution (bit us in v3.x → fixed v4.0.1)
 

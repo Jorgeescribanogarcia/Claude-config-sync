@@ -65,6 +65,7 @@ Read `backup-meta.json` from the clone and show, then **wait for confirmation**:
 ⚠️  This will overwrite your current configuration at:
     ~/.claude/
     ~/.agents/skills/   (system agent skills — only if the backup has them)
+    VSCode profile       (settings/keybindings/snippets + extensions — only if the backup has it)
 
 Continue with restore? (reply: yes / no)
 ```
@@ -82,6 +83,11 @@ SAFETY_BACKUP="$HOME/.claude-before-restore-$TS"
 cp -r "$HOME/.claude" "$SAFETY_BACKUP"
 # Also snapshot ~/.agents (system agent skills) if present — the restore may overwrite ~/.agents/skills.
 [ -d "$HOME/.agents" ] && cp -r "$HOME/.agents" "$HOME/.agents-before-restore-$TS"
+# And the VSCode User profile if a vscode/ backup will overwrite it.
+if [ -d "$CLONE/vscode" ]; then
+  case "$(uname -s)" in Darwin) V="$HOME/Library/Application Support/Code/User";; *MINGW*|*MSYS*|*CYGWIN*) V="$APPDATA/Code/User";; *) V="$HOME/.config/Code/User";; esac
+  [ -d "$V" ] && cp -r "$V" "$HOME/.vscode-user-before-restore-$TS"
+fi
 echo "Safety backup created at: $SAFETY_BACKUP"
 ```
 
@@ -123,6 +129,39 @@ fi
 ```
 
 Show progress as each file/dir is restored.
+
+---
+
+### STEP 5c — Restore the VSCode profile (only if the backup has one)
+
+If `$CLONE/vscode/` exists, the backup includes a VSCode profile (opt-in `/config vscode on`).
+Restore the user config + snippets, and reinstall the extensions from the portable list:
+
+```bash
+if [ -d "$CLONE/vscode" ]; then
+  case "$(uname -s)" in
+    Darwin)                  VSC="$HOME/Library/Application Support/Code/User" ;;
+    *MINGW*|*MSYS*|*CYGWIN*)  VSC="$APPDATA/Code/User" ;;
+    *)                       VSC="$HOME/.config/Code/User" ;;
+  esac
+  mkdir -p "$VSC/snippets"
+  for f in settings.json keybindings.json tasks.json locale.json argv.json; do
+    [ -f "$CLONE/vscode/$f" ] && cp "$CLONE/vscode/$f" "$VSC/$f" && echo "restored vscode/$f"
+  done
+  [ -d "$CLONE/vscode/snippets" ] && cp -R "$CLONE/vscode/snippets/." "$VSC/snippets/" && echo "restored vscode/snippets/"
+  # reinstall extensions from the portable list (needs the `code` CLI on PATH)
+  if [ -f "$CLONE/vscode/extensions.txt" ] && command -v code >/dev/null 2>&1; then
+    while IFS= read -r ext; do
+      [ -n "$ext" ] && code --install-extension "$ext" --force >/dev/null 2>&1 && echo "  + $ext"
+    done < "$CLONE/vscode/extensions.txt"
+  elif [ -f "$CLONE/vscode/extensions.txt" ]; then
+    echo "  (VSCode 'code' CLI not on PATH — install extensions later: cat $CLONE/vscode/extensions.txt)"
+  fi
+fi
+```
+
+The machine-specific `globalStorage/`, `workspaceStorage/`, `History/` and `sync/` folders are never
+part of the backup, so they are untouched here.
 
 ---
 
@@ -194,6 +233,7 @@ Iterate over the manifest entries yourself. If the manifest is **schema 1** (leg
 📁 Files restored: <count>
 🔌 Plugins rebuilt: <n> plugin(s) from <m> marketplace(s)
 🧠 Memory restored: <k> note(s) across <n> project(s)
+🆚 VSCode profile: <restored + N extensions | not in backup>
 📅 Backup applied: <backup_date>
 
 ⚠️  Restart Claude Code to apply all changes (plugins finish loading on restart).
