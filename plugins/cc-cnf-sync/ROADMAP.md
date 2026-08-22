@@ -3,7 +3,9 @@
 Ideas discussed but **not yet implemented**. Current shipped behavior is described in
 [README.md](README.md); this file only tracks what's planned. (Shipped: **v4.0.x** — auth is via
 the GitHub CLI, no MCP; **v4.2.0** — system-level agent skills in `~/.agents/skills` (skill.sh & co.)
-sync alongside `~/.claude`; see the plugin `CLAUDE.md` for architecture.)
+sync alongside `~/.claude`; **v4.3.0** — `/sessions`, opt-in VSCode profile sync and `/config`;
+**v4.4.0** — `MEMORY.md` is merged by link target, so the index stops accumulating stale
+duplicates of reworded entries; see the plugin `CLAUDE.md` for architecture.)
 
 ---
 
@@ -13,8 +15,8 @@ sync alongside `~/.claude`; see the plugin `CLAUDE.md` for architecture.)
 
 Since **v3.0.0**, per-project memory is synced **two-way** across machines on every
 `SessionStart`/`SessionEnd` (see `hooks/sync-memory.sh`). The merge is lossless: notes
-present on only one machine are copied over, `MEMORY.md` is line-unioned, and when the
-**same note diverged** on two machines, **both versions are kept**.
+present on only one machine are copied over, `MEMORY.md` is merged line by line (keyed
+by link target), and when the **same note diverged** on two machines, **both versions are kept**.
 
 ### The limitation we want to fix
 

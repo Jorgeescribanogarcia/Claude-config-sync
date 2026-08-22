@@ -65,7 +65,12 @@ The global-config 3-way bases live in `~/.config/cc-cnf-sync/` (`config-base`), 
 - **3-way merge** vs `.cc-cnf-sync-base`: editing a note on one side only = that edit wins, no
   conflict. Both sides changed since base = real conflict → keep local as `<n>.md`, remote as
   `<n>.conflict.md` on both sides.
-- `MEMORY.md` = line-union (dedup).
+- `MEMORY.md` = 3-way **line** merge keyed by each line's link target (`](<note>.md)`), not by
+  its text — a reworded entry replaces the old line instead of piling up next to it, and an entry
+  deleted on one machine stays deleted. The ancestor is `.cc-cnf-sync-memory-base` (a copy of the
+  index as last synced, written by `record_bases`, never itself synced). No base yet → plain union,
+  which never deletes. An empty merge result is never written; the local index is restored from the
+  backup instead.
 - **Real-note deletions do NOT propagate** (safety — a plain `rm` reappears from the other
   machine). Deliberate deletion is only via `/memory delete`, which drops a `<n>.md.deleted`
   tombstone. `.conflict.md` deletions DO propagate via `<n>.conflict.md.deleted` tombstones.
