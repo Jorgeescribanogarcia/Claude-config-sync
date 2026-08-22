@@ -72,7 +72,8 @@ the sync does a **3-way merge** against the version this machine last synced (th
 changed, that edit wins with **no conflict** — simply editing a note is never treated as a conflict. Only
 when **both** sides changed the same note since the last sync are both copies kept (`<name>.md` +
 `<name>.conflict.md`, compared ignoring CRLF/LF so line-endings alone never trigger it). `MEMORY.md` (the
-index) is line-unioned.
+index) is merged line by line, keyed by the note each line links to — so rewording an entry updates
+it in place instead of leaving the old line behind, and an entry you delete stays deleted.
 
 **Deletions are treated by kind.** A plain `rm` of a **real note** does **not** propagate — it reappears
 from the other machine, so an accidental delete is never silently mirrored everywhere. To remove a real

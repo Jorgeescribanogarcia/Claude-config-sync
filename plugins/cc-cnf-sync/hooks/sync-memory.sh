@@ -19,7 +19,10 @@
 #                                       last-synced base — editing a note is not a conflict)
 #   - same note, both sides edited    -> local kept as <name>.md, remote kept as
 #                                       <name>.conflict.md (on BOTH sides)
-#   - MEMORY.md                      -> line-union (dedup) — the right index semantic
+#   - MEMORY.md                      -> 3-way LINE merge keyed by each line's link target,
+#                                       so rewording an entry replaces it instead of
+#                                       adding a second line, and a removed entry stays
+#                                       removed (a plain text union grew it forever)
 #   - real-note deletions            -> NOT propagated (a note deleted on one machine
 #                                       reappears from the other — safety)
 #   - .conflict.md deletions         -> propagated via a <name>.conflict.md.deleted
@@ -177,6 +180,10 @@ record_bases() { # $1 = local memory dir — snapshot every note's hash as the n
       printf '%s %s\n' "$(hash_note "$f")" "$b"
     done; } > "$bf.tmp" 2>/dev/null
   mv "$bf.tmp" "$bf" 2>/dev/null
+  # …and a full COPY of the index, because MEMORY.md is merged line by line: a
+  # content hash only answers "did it change", and the line merge needs to know
+  # WHICH entries existed at the last sync to tell a deletion from a new arrival.
+  cp "$1/MEMORY.md" "$1/.cc-cnf-sync-memory-base" 2>/dev/null
 }
 
 # ── file-level union merge of $1 (remote/cache dir) and $2 (local dir) ─
@@ -231,12 +238,55 @@ union_merge() {
     [ -e "$cdir/$base.deleted" ] && { rm -f "$lf" 2>/dev/null; continue; }   # tombstoned real note → don't resurrect
     [ -e "$cdir/$base" ] || cp "$lf" "$cdir/$base" 2>/dev/null
   done
-  # MEMORY.md: union of unique lines (order: remote first, then local-only)
+  # MEMORY.md: 3-way LINE merge keyed by the note each line links to.
+  # Every index line is `- [Title](<note>.md) — hook`, so the LINK TARGET is the entry's
+  # identity; the surrounding text is just its current wording. Deduping by exact text
+  # (what this did before) treated a reworded line as a NEW entry, so both survived and
+  # the stale one kept coming back from the backup — the index grew without bound until
+  # it was loaded truncated. Keying on the target collapses every wording of an entry to
+  # one line, and the base (the index as this machine last synced it) lets a deletion or
+  # a rewording propagate instead of resurrecting. Lines with no link (headings, blanks)
+  # fall back to their literal text.
   if [ -e "$cdir/MEMORY.md" ] || [ -e "$ldir/MEMORY.md" ]; then
-    cat "$cdir/MEMORY.md" "$ldir/MEMORY.md" 2>/dev/null | awk '!seen[$0]++' > "$cdir/MEMORY.md.tmp" 2>/dev/null
+    IBASE="$ldir/.cc-cnf-sync-memory-base"
+    hb=0; [ -s "$IBASE" ] && hb=1          # no base yet (first sync / older install) → plain union, never delete
+    { [ -s "$IBASE" ] && sed 's/^/B/' "$IBASE"
+      [ -e "$cdir/MEMORY.md" ] && sed 's/^/R/' "$cdir/MEMORY.md"
+      [ -e "$ldir/MEMORY.md" ] && sed 's/^/L/' "$ldir/MEMORY.md"
+    } 2>/dev/null | awk -v HB="$hb" '
+      function key(l,   p,s,q) {
+        p = index(l, "](")
+        if (p > 0) { s = substr(l, p+2); q = index(s, ")"); if (q > 0) return "T:" substr(s, 1, q-1) }
+        return "L:" l
+      }
+      { t = substr($0,1,1); l = substr($0,2); sub(/\r$/, "", l); k = key(l) }
+      t == "B" { if (!(k in bs)) { bs[k]=1; bt[k]=l } ; next }
+      t == "R" { if (!(k in rs)) { rs[k]=1; rt[k]=l; ro[++rn]=k } ; next }
+               { if (!(k in ls)) { ls[k]=1; lt[k]=l; lo[++ln]=k } }
+      END {
+        for (i = 1; i <= ln; i++) { k = lo[i]
+          if (k in rs) {                                  # on both sides: local wording is canonical,
+            if (HB && (k in bs) && lt[k] == bt[k] && rt[k] != bt[k]) print rt[k]
+            else print lt[k]                              # …unless only the backup reworded it
+            out[k] = 1; continue
+          }
+          if (HB && (k in bs)) continue                   # was in the base, gone from the backup → deleted elsewhere
+          print lt[k]; out[k] = 1                         # new here → push it up
+        }
+        for (i = 1; i <= rn; i++) { k = ro[i]
+          if (k in out) continue
+          if (HB && (k in bs)) continue                   # was in the base, gone locally → deleted here
+          print rt[k]                                     # new in the backup → pull it down
+        }
+      }' > "$cdir/MEMORY.md.tmp" 2>/dev/null
+    # An empty result is never written: it would mean "drop the whole index", which no
+    # legitimate merge produces (a real emptying is a deletion of every note, and those
+    # go through the tombstone path).
     if [ -s "$cdir/MEMORY.md.tmp" ]; then
       cp "$cdir/MEMORY.md.tmp" "$cdir/MEMORY.md" 2>/dev/null
       cp "$cdir/MEMORY.md.tmp" "$ldir/MEMORY.md" 2>/dev/null
+    elif [ -e "$cdir/MEMORY.md" ]; then
+      cp "$cdir/MEMORY.md" "$ldir/MEMORY.md" 2>/dev/null   # …and the local side is restored from it
     fi
     rm -f "$cdir/MEMORY.md.tmp" 2>/dev/null
   fi
