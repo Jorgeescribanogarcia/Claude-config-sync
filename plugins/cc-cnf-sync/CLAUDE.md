@@ -71,6 +71,8 @@ The global-config 3-way bases live in `~/.config/cc-cnf-sync/` (`config-base`), 
   index as last synced, written by `record_bases`, never itself synced). No base yet → plain union,
   which never deletes. An empty merge result is never written; the local index is restored from the
   backup instead.
+  Within one side, a target repeated twice keeps the position of the first line but the text of
+  the LAST — duplicates are appended, so the last one is the current wording.
 - **Real-note deletions do NOT propagate** (safety — a plain `rm` reappears from the other
   machine). Deliberate deletion is only via `/memory delete`, which drops a `<n>.md.deleted`
   tombstone. `.conflict.md` deletions DO propagate via `<n>.conflict.md.deleted` tombstones.
