@@ -260,9 +260,12 @@ union_merge() {
         return "L:" l
       }
       { t = substr($0,1,1); l = substr($0,2); sub(/\r$/, "", l); k = key(l) }
-      t == "B" { if (!(k in bs)) { bs[k]=1; bt[k]=l } ; next }
-      t == "R" { if (!(k in rs)) { rs[k]=1; rt[k]=l; ro[++rn]=k } ; next }
-               { if (!(k in ls)) { ls[k]=1; lt[k]=l; lo[++ln]=k } }
+      # Within ONE side a repeated target is the same entry written twice; duplicates are
+      # appended, so the LAST occurrence is the current wording. Keep the position of the
+      # first (the index keeps its shape) but the text of the last.
+      t == "B" { if (!(k in bs)) bs[k]=1; bt[k]=l; next }
+      t == "R" { if (!(k in rs)) { rs[k]=1; ro[++rn]=k } rt[k]=l; next }
+               { if (!(k in ls)) { ls[k]=1; lo[++ln]=k } lt[k]=l }
       END {
         for (i = 1; i <= ln; i++) { k = lo[i]
           if (k in rs) {                                  # on both sides: local wording is canonical,
