@@ -191,6 +191,7 @@ record_bases() { # $1 = local memory dir — snapshot every note's hash as the n
 union_merge() {
   cdir=$1; ldir=$2
   mkdir -p "$cdir" "$ldir" 2>/dev/null
+  RESURRECTED=""                      # notes restored here that this machine HAD at the last sync
   STATE="$ldir/.cc-cnf-sync-conflicts"
   BASEFILE="$ldir/.cc-cnf-sync-base"
   # Deliberate real-note deletions (from the /memory command) propagate via a
@@ -211,6 +212,11 @@ union_merge() {
     lf="$ldir/$base"
     if [ "$base" = "MEMORY.md" ]; then continue; fi   # handled separately below
     if [ ! -e "$lf" ]; then
+      # Restoring a note this machine had at the last sync is the SAFETY rule doing its job
+      # (a plain rm never propagates). It is also indistinguishable from a deliberate delete,
+      # and staying silent about it is what turns that into an endless loop: the user deletes,
+      # the hook restores, nobody says why. Collect these and name them in the session message.
+      [ -n "$(base_get "$base")" ] && RESURRECTED="$RESURRECTED $base"
       cp "$rf" "$lf" 2>/dev/null
     elif notes_differ "$rf" "$lf"; then
       # 3-way merge against the last-synced base, so editing a note doesn't self-conflict.
@@ -462,6 +468,11 @@ if [ "$synced" = 1 ]; then
     msg="cc-cnf-sync: memory synced with your backup (${N} note(s), key: ${KEY})."
   fi
   [ "$C" -gt 0 ] && msg="${msg} ${C} note(s) diverged across machines and were kept as .conflict.md for you to reconcile."
+  # Name the notes that came back, and how to make a deletion stick. Without this the user
+  # deletes, the hook restores, and the loop repeats with nothing explaining it.
+  if [ -n "$RESURRECTED" ]; then
+    msg="${msg} Restored from the backup:${RESURRECTED} — these were deleted here with a plain rm, which never propagates (safety). To remove one everywhere, run the /memory delete command, which leaves a tombstone the other machines honor."
+  fi
   emit_context "$msg"
 else
   emit_context "cc-cnf-sync: memory sync could not complete this session (push contention or network); your local notes are untouched and it will retry next session."

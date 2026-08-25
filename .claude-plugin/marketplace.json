@@ -6,14 +6,14 @@
   },
   "metadata": {
     "description": "JEG Claude Marketplace — Community plugins for Claude Code",
-    "version": "4.4.1"
+    "version": "4.5.0"
   },
   "plugins": [
     {
       "name": "cc-cnf-sync",
       "source": "./plugins/cc-cnf-sync",
       "description": "Backup and restore Claude Code configuration, with per-project memory AND global user config (CLAUDE.md, commands, skills, agents, settings) — plus system-level agent skills in ~/.agents/skills (skill.sh & co.) — kept in continuous two-way sync across machines/OS via SessionStart/SessionEnd hooks. Conflict-safe 3-way merge — editing a note never self-conflicts, and divergent edits are never lost. Optional opt-in VSCode profile sync (settings, keybindings, snippets, extensions) via /config, plus a /sessions manager to list/delete/clean/rename a project's chat sessions. Authenticates entirely through the GitHub CLI (gh) — no token stored by the plugin; gh keeps the credential in your OS credential store and wires git (and the hook) to use it. Backed by a private GitHub repository, fully portable across Linux, macOS and Windows. Run /setup after installing.",
-      "version": "4.4.1",
+      "version": "4.5.0",
       "author": {
         "name": "Jorgeescribanogarcia",
         "url": "https://github.com/Jorgeescribanogarcia"

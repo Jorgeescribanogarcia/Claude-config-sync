@@ -76,6 +76,9 @@ The global-config 3-way bases live in `~/.config/cc-cnf-sync/` (`config-base`), 
 - **Real-note deletions do NOT propagate** (safety — a plain `rm` reappears from the other
   machine). Deliberate deletion is only via `/memory delete`, which drops a `<n>.md.deleted`
   tombstone. `.conflict.md` deletions DO propagate via `<n>.conflict.md.deleted` tombstones.
+  A restored note that this machine HAD at the last sync (i.e. it is listed in
+  `.cc-cnf-sync-base`) is NAMED in the SessionStart message, with the pointer to `/memory
+  delete`. Silence there is what turned delete → restore → delete into an unexplainable loop.
 - **Global config** (`sync_config`): strict allowlist — `CLAUDE.md settings.json keybindings.json
   plugins.json` + `commands/ skills/ agents/` trees. `settings.local.json` is intentionally NOT
   synced. Same 3-way logic; conflicts saved as `.cc-conflict` sidecars.

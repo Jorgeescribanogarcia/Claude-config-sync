@@ -4,8 +4,9 @@ Ideas discussed but **not yet implemented**. Current shipped behavior is describ
 [README.md](README.md); this file only tracks what's planned. (Shipped: **v4.0.x** — auth is via
 the GitHub CLI, no MCP; **v4.2.0** — system-level agent skills in `~/.agents/skills` (skill.sh & co.)
 sync alongside `~/.claude`; **v4.3.0** — `/sessions`, opt-in VSCode profile sync and `/config`;
-**v4.4.0** — `MEMORY.md` is merged by link target, so the index stops accumulating stale
-duplicates of reworded entries; see the plugin `CLAUDE.md` for architecture.)
+**v4.4.x** — `MEMORY.md` is merged by link target, so the index stops accumulating stale
+duplicates of reworded entries; **v4.5.0** — a note put back by the safety rule is named in the
+session message; see the plugin `CLAUDE.md` for architecture.)
 
 ---
 
