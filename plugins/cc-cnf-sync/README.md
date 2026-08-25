@@ -76,7 +76,9 @@ index) is merged line by line, keyed by the note each line links to — so rewor
 it in place instead of leaving the old line behind, and an entry you delete stays deleted.
 
 **Deletions are treated by kind.** A plain `rm` of a **real note** does **not** propagate — it reappears
-from the other machine, so an accidental delete is never silently mirrored everywhere. To remove a real
+from the other machine, so an accidental delete is never silently mirrored everywhere — and the note is
+**named in the session message** along with the command that removes it for good, so a deletion that keeps
+undoing itself tells you why instead of looking like a sync bug. To remove a real
 note **on purpose** (from the backup and every machine), use **`/memory delete <note>`**: it drops a
 `<name>.md.deleted` tombstone the hook honors everywhere. A **`.conflict.md`** is an ephemeral marker, not a
 note: once you reconcile it into `<name>.md` and delete it, that removal **also** propagates (via a
